@@ -1,0 +1,13 @@
+/* baer-db.css
+Main CSS stylesheet for BAER DB Web pages, Moscow Forestry Sciences 
+Laboratory. By Conrad Albrecht (CMA) 2013.11.14.
+*/
+
+/* Forest-green page frame to match other pages on the site.  -CMA 2013.11.14.
+*/
+body { font : 12px Verdana,Arial,sans-serif; background-color : #49572a;
+															margin-top : 8px; }
+
+.PageContentDiv { background-color : #fbf8e0; padding : 20px }
+
+
