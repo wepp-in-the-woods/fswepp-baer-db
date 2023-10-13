@@ -1,10 +1,12 @@
 # fswepp-baer-db
 
-## Current server directories are
+## Install in fsweppy-docker var/www/
 ```
-    /local/data/org/os/var/www/BAERTOOLS/baer-db
-    /local/data/org/os/var/www/cgi-bin/BAERTOOLS/baer-db
+    var/www/BAERTOOLS/baer-db
+    var/www/cgi-bin/BAERTOOLS/baer-db
 ```
+
+This is separate from fsweppy-docker to encapulate the build from the database files needed by the application.
 	
 ## Updating baer-db
 
