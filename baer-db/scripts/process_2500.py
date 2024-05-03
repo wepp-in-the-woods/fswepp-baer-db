@@ -11,6 +11,33 @@ import sys
 import re
 import shutil
 
+try:
+    from InquirerPy import inquirer
+    from InquirerPy.validator import PathValidator
+except:
+    inquirer = None
+    
+    
+def choose_file(files):
+    """
+    provides a cli selection menu to select 2500-8 file from list
+    """
+    choices = [f"{f[0]} (Score: {f[1]})" for f in files]
+    choices.append('None of the above')
+    selected_file = inquirer.select(
+        message="Select a file:",
+        choices=choices
+    ).execute()
+
+    # Find the index of the selected file in the choices list
+    selected_index = choices.index(selected_file)
+    
+    if selected_index < len(files):
+        return files[selected_index][0]
+    else:
+        return None
+    
+    
 from pprint import pprint
 
 date = datetime.datetime.now()
@@ -23,8 +50,8 @@ def search_files(filepaths, tokens, threshold=2):
     
     patterns = [re.compile(re.escape(token), re.IGNORECASE) for token in tokens]
 
-    for filename in filepaths:
-        fn = _split(filename)[-1]
+    for filepath in filepaths:
+        fn = _split(filepath)[-1]
         
         score = 0
         for pattern in patterns:
@@ -32,7 +59,7 @@ def search_files(filepaths, tokens, threshold=2):
                 score += 1
         
         if score >= threshold:
-            scores.append((filename, score))
+            scores.append((filepath, score))
 
     scores.sort(key=lambda x: x[1], reverse=True)
     return scores
@@ -137,8 +164,17 @@ for project_elem in root.findall('Projects'):
         if match is None:
             tokens = fire_name.split() + forest.split()
             print(f"No matches found, running token match on {tokens}")
-            print(f"If any of these are correct copy the file to the 2500 directory as `{fn}`")
-            pprint(search_files(pdf_files, fire_name.split() + forest.split()))
+            
+            options = search_files(pdf_files, fire_name.split() + forest.split())
+            
+            if inquirer is not None:
+                if options:
+                    selected_file = choose_file(options)
+                    if selected_file is not None:
+                        match = selected_file
+            else:
+                print(f"If any of these are correct copy the file to the 2500 directory as `{fn}`")
+                pprint(options)
         print()
 
         if match is not None:
