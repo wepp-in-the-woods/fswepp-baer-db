@@ -12,13 +12,15 @@ import shutil
 
 from pprint import pprint
 
-target_years = [2021, 2022]
+date = datetime.datetime.now()
+
+start_year = 2022
 
 def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
 
 # Directory path to search for .pdf files
-directory_path = r'C:\\Users\\roger\\src\\fswepp-baer-db\\raw_data\\20240503\\Dicks Work 2024\\73 2500-8s'
+directory_path = r'C:\Users\roger\Downloads\Dicks Work 2024\Dicks Work 2024\73 2500-8s'
 
 # List to store the found .pdf file paths
 pdf_files = []
@@ -46,6 +48,11 @@ for fn in pdf_files:
         continue
 
     finals.append(fn)
+    
+print(f'Found {len(pdf_files)} pdf_files')
+
+assert len(pdf_files) > 0, "Did not find any pdf files to match make sure directory_path is set correctly."
+
 
 reports = [_split(fn)[1] for fn in glob('../2500-8/*.pdf')]
 
@@ -55,7 +62,6 @@ tree = ET.parse('../Projects.xml')
 root = tree.getroot()
 
 
-date = datetime.datetime.now()
 fp = open(f'logs/{date.year}-{date.month:02}-{date.day:02}_unmatched_2500.log', 'w')
 
 # Iterate over "Project" elements
@@ -75,9 +81,9 @@ for project_elem in root.findall('Projects'):
         if fire_start is None:
             continue
 
-        fire_start = fire_start.text
-
-        if not any([str(yr) in fire_start for yr in target_years]):
+        fire_start = datetime.datetime.strptime(fire_start.text, "%Y-%m-%dT%H:%M:%S")
+        
+        if fire_start.year < start_year:
             continue
 
         match = None
