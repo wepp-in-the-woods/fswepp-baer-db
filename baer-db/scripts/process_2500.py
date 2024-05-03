@@ -5,6 +5,7 @@ from os.path import exists as _exists
 from sqlalchemy import create_engine
 import pandas as pd
 import xml.etree.ElementTree as ET
+import datetime
 import os
 import sys
 import shutil
@@ -16,8 +17,8 @@ target_years = [2021, 2022]
 def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
 
-# Directory path to recursively search for .pdf files
-directory_path = r'C:\\Users\\roger\\src\\fswepp-baer-db\\baer-db\\2500-8\\raw_data\\20240503\\Dicks Work 2024\\2500'
+# Directory path to search for .pdf files
+directory_path = r'C:\\Users\\roger\\src\\fswepp-baer-db\\raw_data\\20240503\\Dicks Work 2024\\73 2500-8s'
 
 # List to store the found .pdf file paths
 pdf_files = []
@@ -46,12 +47,16 @@ for fn in pdf_files:
 
     finals.append(fn)
 
-# Find the current reports
 reports = [_split(fn)[1] for fn in glob('../2500-8/*.pdf')]
+
 
 # Parse the XML file
 tree = ET.parse('../Projects.xml')
 root = tree.getroot()
+
+
+date = datetime.datetime.now()
+fp = open(f'logs/{date.year}-{date.month:02}-{date.day:02}_unmatched_2500.log', 'w')
 
 # Iterate over "Project" elements
 for project_elem in root.findall('Projects'):
@@ -93,13 +98,22 @@ for project_elem in root.findall('Projects'):
                     match = rpt
                     break
 
-        print("Firename:", fire_name)
-        print("Forest:", forest)
-        print("Report:", fn)
-        print("fire_start", fire_start)
-        print("Match:", match)
+        print(f"Firename: {fire_name}")
+        print(f"Forest: {forest}")
+        print(f"Report: {fn}")
+        print(f"fire_start {fire_start}")
+        print(f"Match: {match}")
         print("----")
 
         if match is not None:
             if not _exists(_join(f'../2500-8/{fn}')):
                 shutil.copyfile(match, _join(f'../2500-8/{fn}'))
+        else:
+            print(f"Firename: {fire_name}", file=fp)
+            print(f"Forest: {forest}", file=fp)
+            print(f"Report: {fn}", file=fp)
+            print(f"fire_start {fire_start}", file=fp)
+            print(f"Match: {match}", file=fp)
+            print("----", file=fp)
+
+fp.close()
