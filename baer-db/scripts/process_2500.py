@@ -15,6 +15,7 @@ try:
     from InquirerPy.validator import PathValidator
 except:
     inquirer = None
+    print('`pip install InquirerPy` for interactive file matching')
     
     
 def choose_file(files):
