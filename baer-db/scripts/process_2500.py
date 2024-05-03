@@ -10,6 +10,7 @@ import os
 import sys
 import re
 import shutil
+from pprint import pprint
 
 try:
     from InquirerPy import inquirer
@@ -36,13 +37,6 @@ def choose_file(files):
         return files[selected_index][0]
     else:
         return None
-    
-    
-from pprint import pprint
-
-date = datetime.datetime.now()
-
-start_year = 2023
 
 
 def search_files(filepaths, tokens, threshold=2):
@@ -65,11 +59,18 @@ def search_files(filepaths, tokens, threshold=2):
     return scores
 
 
+date = datetime.datetime.now()
+
+start_year = None
+
+if start_year is None:
+    start_year = int(input("Specify Start Year to match files from Projects.xml: "))
+
 def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
 
 # Directory path to search for .pdf files
-directory_path = r'C:\Users\roger\Downloads\Dicks Work 2024\Dicks Work 2024\73 2500-8s'
+directory_path = '../../raw_data/all_pdfs'
 
 # List to store the found .pdf file paths
 pdf_files = []
