@@ -16,8 +16,8 @@ target_years = [2021, 2022]
 def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
 
-# Directory path to search for .pdf files
-directory_path = r'C:\\Users\\roger\\src\\fswepp-baer-db\\baer-db\\2500-8'
+# Directory path to recursively search for .pdf files
+directory_path = r'C:\\Users\\roger\\src\\fswepp-baer-db\\baer-db\\2500-8\\raw_data\\20240503\\Dicks Work 2024\\2500'
 
 # List to store the found .pdf file paths
 pdf_files = []
@@ -46,8 +46,8 @@ for fn in pdf_files:
 
     finals.append(fn)
 
+# Find the current reports
 reports = [_split(fn)[1] for fn in glob('../2500-8/*.pdf')]
-
 
 # Parse the XML file
 tree = ET.parse('../Projects.xml')
