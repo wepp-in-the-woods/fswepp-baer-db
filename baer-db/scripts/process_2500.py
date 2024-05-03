@@ -2,8 +2,6 @@ from glob import glob
 from os.path import split as _split
 from os.path import join as _join
 from os.path import exists as _exists
-from sqlalchemy import create_engine
-import pandas as pd
 import xml.etree.ElementTree as ET
 import datetime
 import os
