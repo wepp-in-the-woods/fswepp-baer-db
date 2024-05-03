@@ -1,18 +1,32 @@
 # fswepp-baer-db
 
-## Install in fsweppy-docker var/www/
-```
-    var/www/BAERTOOLS/baer-db
-    var/www/cgi-bin/BAERTOOLS/baer-db
-```
-
-This is separate from fsweppy-docker to encapulate the build from the database files needed by the application.
+This is separate from fsweppy-docker to encapsulate the build from the database files needed by the application.
 	
 ## Updating baer-db
 
-1. Open the new baer access database from Pete
+1. Open the new baer access database from Pete. This will likely require adding the file as a trusted file in MS Access
 
-2. Export the Projects, Treatments, and Treatment Costs tables. (note that the Projects.xml will
-   fail to load if the database contains special characters (non-ASCII)).
+3. Export the Projects, Treatments, and Treatment Costs tables. Overwrite the files in baer-db.
+   - Commit changes as a intermediary step. We have git we should use it!
+
+5. Sanitize the non-printable and non-ascii characters using the `baer-db/sanitize_characters.py` script.
+   - Use git diff to view sanitization edits.
    
-3. Need to match the 2500-8 reports to the new files. Use the baer-db/scripts/process_2500.py script
+4. Need to match the 2500-8 reports to the new files. Use the baer-db/scripts/process_2500.py script.
+   - set `directory_path` on line 20 to the directory with the new 2500 reports that need to be added. it will search subdirectories as well
+
+5. Commit and Push changes
+
+## Deployment on forest.moscowfsl.wsu.edu
+`/workdir/fswepp-docker/docker-compose.yml` volume mounts `/workdir/fswepp-baer-db/baer-db:/var/www/BAERTOOLS/baer-db`
+
+```
+cd /workdir/fswepp-baer-db
+git pull
+```
+
+### fsweppy-docker baer-db notes
+
+`var/www/BAERTOOLS/baer-db` is were the app looks for the .xml and pdfs. it is mounted through docker
+
+`var/www/cgi-bin/BAERTOOLS/baer-db` is where the perl scripts for the app are located
