@@ -17,7 +17,7 @@ def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
 
 # Directory path to search for .pdf files
-directory_path = r'F:\\2500-8 forms to enter into BAER DB'
+directory_path = r'C:\\Users\\roger\\src\\fswepp-baer-db\\baer-db\\2500-8'
 
 # List to store the found .pdf file paths
 pdf_files = []
@@ -101,7 +101,5 @@ for project_elem in root.findall('Projects'):
         print("----")
 
         if match is not None:
-            shutil.copyfile(match, _join(f'../2500-8/{fn}'))
-
-
-pprint(pdf_files)
+            if not _exists(_join(f'../2500-8/{fn}')):
+                shutil.copyfile(match, _join(f'../2500-8/{fn}'))
