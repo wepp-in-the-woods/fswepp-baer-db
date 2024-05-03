@@ -8,13 +8,35 @@ import xml.etree.ElementTree as ET
 import datetime
 import os
 import sys
+import re
 import shutil
 
 from pprint import pprint
 
 date = datetime.datetime.now()
 
-start_year = 2022
+start_year = 2023
+
+
+def search_files(filepaths, tokens, threshold=2):
+    scores = []
+    
+    patterns = [re.compile(re.escape(token), re.IGNORECASE) for token in tokens]
+
+    for filename in filepaths:
+        fn = _split(filename)[-1]
+        
+        score = 0
+        for pattern in patterns:
+            if pattern.search(fn):
+                score += 1
+        
+        if score >= threshold:
+            scores.append((filename, score))
+
+    scores.sort(key=lambda x: x[1], reverse=True)
+    return scores
+
 
 def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
@@ -103,6 +125,7 @@ for project_elem in root.findall('Projects'):
                 if comparison_formatter(fire_name) in  comparison_formatter(_split(rpt)[1]):
                     match = rpt
                     break
+        
 
         print(f"Firename: {fire_name}")
         print(f"Forest: {forest}")
@@ -110,6 +133,13 @@ for project_elem in root.findall('Projects'):
         print(f"fire_start {fire_start}")
         print(f"Match: {match}")
         print("----")
+                    
+        if match is None:
+            tokens = fire_name.split() + forest.split()
+            print(f"No matches found, running token match on {tokens}")
+            print(f"If any of these are correct copy the file to the 2500 directory as `{fn}`")
+            pprint(search_files(pdf_files, fire_name.split() + forest.split()))
+        print()
 
         if match is not None:
             if not _exists(_join(f'../2500-8/{fn}')):
