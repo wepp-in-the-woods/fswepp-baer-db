@@ -69,7 +69,10 @@ def comparison_formatter(fn):
     return fn.upper().replace(' ', '').replace('/', '')
 
 # Directory path to search for .pdf files
-directory_path = '../../raw_data/all_pdfs'
+directory_path = '/workdir/fswepp-baer-db/raw_data/2024/BAERDAT DB Update May 2025/2024 PDF Bruggink'
+
+
+assert _exists(directory_path)
 
 # List to store the found .pdf file paths
 pdf_files = []
@@ -77,6 +80,7 @@ pdf_files = []
 # Traverse the directory tree
 for root, dirs, files in os.walk(directory_path):
     for file in files:
+        print(file)
         # Check if the file has a .pdf extension
         if file.endswith('.pdf'):
             # Construct the absolute file path
@@ -179,7 +183,7 @@ for project_elem in root.findall('Projects'):
 
         if match is not None:
             if not _exists(_join(f'../2500-8/{fn}')):
-                shutil.copyfile(match, _join(f'../2500-8/{fn}'))
+                shutil.copyfile(match, _join(f'../2500-8/{fn}'.replace(' ', '_')))
         else:
             print(f"Firename: {fire_name}", file=fp)
             print(f"Forest: {forest}", file=fp)
