@@ -2,6 +2,7 @@ replacement_dict = {
     "\u00BD": "1/2", # 1/2 symbol '½'
     "\u00F6": "o", # Lowercase o with diaeresis 'ö'
     "\u00AD": "-", # Soft hyphen '­'
+    "\u2010": "-", 
     "\u2014": "-", # Em dash '—'
     "\u2013": "-", # En dash '–'
     "\uF0A7": "-", # Bullet point (custom symbol) ''
@@ -18,7 +19,9 @@ replacement_dict = {
     "\u201C": '"', # Left double quotation mark "“"
     "\u2018": "'", # Left single quotation mark "‘"
     "\u2019": "'", # Right single quotation mark "’"
-    "\u2022": "-"  # Bullet "•"
+    "\u2022": "-", # Bullet "•"
+    "\u2026": "...", # …
+    "\x02": " "    # Access uses as an internal delimiter when it flattens multi-value fields to text/XML
 }
 
 def replace_non_ascii(xml_file_path):
