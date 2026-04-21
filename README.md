@@ -4,22 +4,31 @@ This is separate from fsweppy-docker to encapsulate the build from the database 
 	
 ## Updating baer-db
 
-1. Open the new baer access database from Pete. This will likely require adding the file as a trusted file in MS Access
+**Prerequisites (for macOS/Linux programmatic export):**
+- `mdbtools` (Install via: `brew install mdbtools`)
+- `pandas` (Install via: `pip install pandas`)
 
-3. Export the Projects, Treatments, and Treatment Costs tables. Overwrite the files in baer-db.
-   - Commit changes as a intermediary step. We have git we should use it!
-   
-4. Replace fswepp-baer-db/Ebaer.accdb and commit! This way it is ready for next year.
+**Steps:**
 
-5. Sanitize the non-printable and non-ascii characters using the `baer-db/sanitize_characters.py` script.
-   - Use git diff to view sanitization edits.
+1. Replace `fswepp-baer-db/baer-db/Ebaer.accdb` with the new version. Commit this as a baseline.
+
+2. Export the Projects, Treatments, and Treatment Costs tables. Overwrite the files in `baer-db/`.
+   - **Option A (Programmatic - Recommended for macOS/Linux):**
+     Run the export script:
+     ```bash
+     python3 baer-db/scripts/export_tables.py
+     ```
+   - **Option B (Manual - Windows):**
+     Open `Ebaer.accdb` in MS Access and export the `Projects`, `Treatments`, and `Treatment Costs` tables to XML.
+
+3. Sanitize the non-printable and non-ascii characters using the `baer-db/sanitize_characters.py` script.
+   - Use `git diff` to view sanitization edits.
    
-6. Need to match the 2500-8 reports to the generated file naming scheme and copy them into `baer-db/2500-8`
-   with the correct name. 
-   1. Copy the new 2500-8 pdfs into `raw_data/all_pdfs`
+4. Need to match the 2500-8 reports to the generated file naming scheme and copy them into `baer-db/2500-8/` with the correct name. 
+   1. Copy the new 2500-8 pdfs into `raw_data/all_pdfs/`
    2. Use the `baer-db/scripts/process_2500.py` script
    
-7. Commit and Push changes
+5. Commit and Push changes.
 
 ## Deployment on forest.moscowfsl.wsu.edu
 `/workdir/fswepp-docker/docker-compose.yml` volume mounts `/workdir/fswepp-baer-db/baer-db:/var/www/BAERTOOLS/baer-db`

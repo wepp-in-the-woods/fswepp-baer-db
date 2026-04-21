@@ -1,3 +1,14 @@
+"""
+This script exports Projects, Treatments, and Treatment Costs tables from the
+MS Access Ebaer.accdb database into XML format compatible with the fswepp-baer-db project.
+
+Prerequisites:
+    - mdbtools (brew install mdbtools)
+    - pandas (pip install pandas)
+
+Usage:
+    python3 baer-db/scripts/export_tables.py
+"""
 import subprocess
 import pandas as pd
 import io
