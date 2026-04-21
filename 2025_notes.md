@@ -15,5 +15,24 @@ BAERDAT DB Update May 2025
    - Copied all new PDF and DOCX files from the source directory to `raw_data/all_pdfs/` for processing by `baer-db/scripts/process_2500.py`.
 4. **Data Archiving:**
    - Archived the full original handoff (including timesheets, unedited database, and original folder structure) in `raw_data/2025/`.
-5. **Version Control:**
-   - Staged and committed all changes to the `2025` branch.
+5. **Programmatic XML Export:**
+   - Created `baer-db/scripts/export_tables.py` to automate exporting Access tables to XML on macOS.
+   - Successfully exported `Projects`, `Treatments`, and `Treatment Costs` tables to XML format, matching the repository's requirements.
+6. **Version Control:**
+   - Staged and committed all changes (Database, XMLs, PDFs, Scripts, and Notes) to the `2025` branch.
+
+---
+
+### How to export XML tables on macOS
+
+You can now export the required tables programmatically without needing Windows.
+
+**Prerequisites:**
+- `mdbtools` (Install via: `brew install mdbtools`)
+- `pandas` (Install via: `pip install pandas`)
+
+**Command:**
+```bash
+python3 baer-db/scripts/export_tables.py
+```
+This script reads `baer-db/Ebaer.accdb` and overwrites the `.xml` files in the `baer-db/` directory.
