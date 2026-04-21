@@ -24,14 +24,16 @@ This is separate from fsweppy-docker to encapsulate the build from the database 
 3. Sanitize the non-printable and non-ascii characters using the `baer-db/sanitize_characters.py` script.
    - Use `git diff` to view sanitization edits.
    
-4. Need to match the 2500-8 reports to the generated file naming scheme and copy them into `baer-db/2500-8/` with the correct name. 
-   1. Copy the new 2500-8 pdfs into `raw_data/all_pdfs/`
+4. Need to match the 2500-8 reports to the generated file naming scheme and copy them into `baer-db/2500-8/` with the correct standardized name. 
+   1. Copy the new 2500-8 pdfs and docx files into `raw_data/all_pdfs/`.
    2. Use the report matching script:
       - **Agentic (Recommended for macOS/Linux):**
+        This script automates the matching process using multiple strategies (exact name match, finals vs. interims, and token-based scoring). It handles both `.pdf` and `.docx` files.
         ```bash
         python3 baer-db/scripts/agentic_process_2500.py
         ```
-      - **Interactive:**
+      - **Interactive (Original):**
+        Requires `InquirerPy`. Useful if you need to manually adjudicate ambiguous matches.
         ```bash
         python3 baer-db/scripts/process_2500.py
         ```
