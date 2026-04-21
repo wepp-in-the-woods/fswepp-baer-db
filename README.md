@@ -26,7 +26,15 @@ This is separate from fsweppy-docker to encapsulate the build from the database 
    
 4. Need to match the 2500-8 reports to the generated file naming scheme and copy them into `baer-db/2500-8/` with the correct name. 
    1. Copy the new 2500-8 pdfs into `raw_data/all_pdfs/`
-   2. Use the `baer-db/scripts/process_2500.py` script
+   2. Use the report matching script:
+      - **Agentic (Recommended for macOS/Linux):**
+        ```bash
+        python3 baer-db/scripts/agentic_process_2500.py
+        ```
+      - **Interactive:**
+        ```bash
+        python3 baer-db/scripts/process_2500.py
+        ```
    
 5. Commit and Push changes.
 

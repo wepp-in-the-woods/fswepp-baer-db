@@ -91,9 +91,18 @@ questionables_dict = {
 }
 
 def clean_column_name(name):
-    name = name.replace(' ', '_x0020_')
-    name = name.replace('#', '_x0023_')
-    return name
+    # MS Access XML export replaces spaces and special characters with _x00HH_
+    # Tag names can only contain alphanumeric characters, underscores, hyphens, and dots.
+    # We replace everything else with _x00HH_ where HH is the hex value.
+    
+    def replace_char(match):
+        char = match.group(0)
+        return f"_x00{ord(char):02X}_"
+
+    # Match any character that is not alphanumeric or underscore
+    # (Simplified set for safety in XML element names)
+    cleaned = re.sub(r'[^a-zA-Z0-9_]', replace_char, name)
+    return cleaned
 
 def escape_xml(val):
     if val is None:
