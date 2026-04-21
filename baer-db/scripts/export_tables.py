@@ -137,7 +137,7 @@ def export_table_to_ms_xml(db_path, table_name, output_path):
     print(f"Exporting {table_name} to {output_path}...")
     
     # 1. Get CSV data from mdb-export
-    raw_data = subprocess.check_output(["mdb-export", db_path, table_name])
+    raw_data = subprocess.check_output(["mdb-export", "-D", "%Y-%m-%d", "-T", "%Y-%m-%d", db_path, table_name])
     csv_data = raw_data.decode("latin-1")
     
     # Normalize line endings
@@ -180,12 +180,12 @@ def export_table_to_ms_xml(db_path, table_name, output_path):
     print(f"Finished exporting {table_name}.")
 
 if __name__ == "__main__":
-    db = "fswepp-baer-db/baer-db/Ebaer.accdb"
+    db = "baer-db/Ebaer.accdb"
     
     tables_to_export = {
-        "Projects": "fswepp-baer-db/baer-db/Projects.xml",
-        "Treatments": "fswepp-baer-db/baer-db/Treatments.xml",
-        "Treatment Costs": "fswepp-baer-db/baer-db/Treatment Costs.xml"
+        "Projects": "baer-db/Projects.xml",
+        "Treatments": "baer-db/Treatments.xml",
+        "Treatment Costs": "baer-db/Treatment Costs.xml"
     }
     
     for table, path in tables_to_export.items():
