@@ -1,3 +1,6 @@
+import os
+
+# Updated replacement_dict from export_tables.py
 replacement_dict = {
     "\u00BD": "1/2", # 1/2 symbol '½'
     "\u00F6": "o", # Lowercase o with diaeresis 'ö'
@@ -13,57 +16,57 @@ replacement_dict = {
     "\u00F1": "n", # Lowercase n with tilde 'ñ'
     "\uF0AE": "???", # Rightwards arrow to bar (custom symbol) ''
     "\u00BC": "1/4", # 1/4 symbol '¼'
-    "\u2026": " ", # Horizontal ellipsis '…'
+    "\u2026": "...", # Horizontal ellipsis '…'
     "\u00BE": "3/4", # 3/4 symbol '¾'
     "\u201D": '"', # Right double quotation mark "”"
     "\u201C": '"', # Left double quotation mark "“"
     "\u2018": "'", # Left single quotation mark "‘"
     "\u2019": "'", # Right single quotation mark "’"
     "\u2022": "-", # Bullet "•"
-    "\u2026": "...", # …
-    "\x02": " "    # Access uses as an internal delimiter when it flattens multi-value fields to text/XML
+    "\x02": " ",   # Access internal delimiter
+    # Add CP1252 direct byte interpretations that commonly appear in Access/mdbtools latin-1 output
+    "\x80": "EUR", # Euro
+    "\x82": "'",   # Low-9 quote
+    "\x83": "f",   # Florin
+    "\x84": '"',   # Low-9 double quote
+    "\x85": "...", # Ellipsis
+    "\x88": "^",   # Circumflex
+    "\x89": "per mille",
+    "\x8a": "S",   # S hachek
+    "\x8b": "<",   # Left guillemet
+    "\x8c": "OE",  # OE ligature
+    "\x91": "'",   # Smart single quote
+    "\x92": "'",   # Smart single quote
+    "\x93": '"',   # Smart double quote
+    "\x94": '"',   # Smart double quote
+    "\x95": "-",   # Bullet
+    "\x96": "-",   # En dash
+    "\x97": "-",   # Em dash
+    "\x98": "~",   # Tilde
+    "\x99": "TM",  # Trademark
+    "\x9a": "s",   # s hachek
+    "\x9b": ">",   # Right guillemet
+    "\x9c": "oe",  # oe ligature
+    "\x9d": " ",   # undefined
+    "\x9f": "Y",    # Y diaeresis
+    # Fallbacks for characters reported by sanitize_characters.py
+    "Â": "", 
+    "â": "...",
+    "Ã": "A",
+    "§": "Section",
+    "®": "(R)",
+    "©": "(C)",
+    "™": "(TM)",
+    "±": "+/-",
+    "¢": "cents",
+    "·": "-",
+    "ï": "i",
+    "¦": "|",
+    "¯": "-",
+    "¶": "P",
+    "Å": "", # Replication character
 }
 
-def replace_non_ascii(xml_file_path):
-    global replacement_dict
-    
-    with open(xml_file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
-        
-    non_printables = set()
-    for i, char in enumerate(content):
-        if not char.isprintable():
-            if not char in ('\t', '\n'):
-                non_printables.add(char)   
-    
-    if non_printables:
-        for ch in non_printables:
-            content = content.replace(ch, ' ')
-        print(f'\nreplace_non_ascii::Replaced {non_printables} non-printable characters\n\n')
-
-    non_ascii = set([ch for ch in content if (not ord(ch) < 128) and (ch not in replacement_dict)])
-    
-    if non_ascii:
-        print('Potentially problematic characters:')
-        for ch in non_ascii:
-            print(f"Character: '{ch}'\tUnicode: U+{ord(ch):04X}")
-            
-        print('\nreplace_non_ascii::Aborting, please add problematic characters to the replacement_dict\n\n')
-        return
-    
-    og_content = f'{content}'
-    for ch, new, in replacement_dict.items():
-        content = content.replace(ch, new)
-    
-    if og_content == content:
-        print('\nreplace_non_ascii::No replacements made\n\n')
-        return
-        
-    with open(xml_file_path, 'w', encoding='utf-8') as file:
-        file.write(content)
-        
-    print('\nreplace_non_ascii::File modified in place\n\n')
-    
 questionables_dict = {
     '>???': '>',
     '???\tPerennial': '        Perennial',
@@ -72,46 +75,96 @@ questionables_dict = {
     '(???180 acres)': '(180 acres)'
 }
 
-def replace_questionables(xml_file_path):
-    global questionables_dict
+def replace_non_ascii(xml_file_path):
+    global replacement_dict
     
+    if not os.path.exists(xml_file_path):
+        print(f"File not found: {xml_file_path}")
+        return
+
+    print(f"Checking non-ASCII in {xml_file_path}...")
     with open(xml_file_path, 'r', encoding='utf-8') as file:
         content = file.read()
-
-    og_content = f'{content}'
-    
-    for ch, new, in questionables_dict.items():
-        content = content.replace(ch, new)
         
-    if '???' in content:
-        print('Remaining questionables:')
-        remaining_questionables = []
-        for line in content.split('\n'):
-            if "???" in line:
-                print(line)
-                
+    non_printables = set()
+    for char in content:
+        if not char.isprintable():
+            if not char in ('\t', '\n'):
+                non_printables.add(char)   
+    
+    if non_printables:
+        for ch in non_printables:
+            content = content.replace(ch, ' ')
+        print(f'replace_non_ascii::Replaced {non_printables} non-printable characters')
+
+    non_ascii = set([ch for ch in content if (not ord(ch) < 128) and (ch not in replacement_dict)])
+    
+    if non_ascii:
+        print('Potentially problematic characters:')
+        for ch in non_ascii:
+            print(f"Character: '{ch}'\tUnicode: U+{ord(ch):04X}")
+            
+        print('replace_non_ascii::Aborting, please add problematic characters to the replacement_dict\n')
+        return
+    
+    og_content = content
+    for ch, new in replacement_dict.items():
+        content = content.replace(ch, new)
+    
     if og_content == content:
-        print('\nreplace_questionables::No questionable replacements made\n\n')
+        print('replace_non_ascii::No replacements made\n')
         return
         
     with open(xml_file_path, 'w', encoding='utf-8') as file:
         file.write(content)
         
+    print('replace_non_ascii::File modified in place\n')
+    
+def replace_questionables(xml_file_path):
+    global questionables_dict
+    
+    if not os.path.exists(xml_file_path):
+        return
+
+    print(f"Checking questionables in {xml_file_path}...")
+    with open(xml_file_path, 'r', encoding='utf-8') as file:
+        content = file.read()
+
+    og_content = content
+    
+    for ch, new in questionables_dict.items():
+        content = content.replace(ch, new)
         
-    print('\nreplace_questionables::File modified in place')
+    if '???' in content:
+        print('Remaining questionables:')
+        for line in content.split('\n'):
+            if "???" in line:
+                print(line)
+                
+    if og_content == content:
+        print('replace_questionables::No questionable replacements made\n')
+        return
+        
+    with open(xml_file_path, 'w', encoding='utf-8') as file:
+        file.write(content)
+        
+    print('replace_questionables::File modified in place\n')
     
 if __name__ == "__main__":
-    # 1. export Projects.xml from .accdb
+    xml_files = [
+        'baer-db/Projects.xml',
+        'baer-db/Treatments.xml',
+        'baer-db/Treatment Costs.xml'
+    ]
     
-    # 2. git commit Projects.xml 
-    
-    # 3. run the replacements pass
-    xml_file_path = '../Projects.xml'
-    replace_non_ascii(xml_file_path)
+    # Adjust paths if run from within scripts/
+    if os.path.basename(os.getcwd()) == 'scripts':
+        xml_files = [os.path.join('..', f) for f in [
+            'Projects.xml',
+            'Treatments.xml',
+            'Treatment Costs.xml'
+        ]]
 
-    # 4. view git diff to see changes
-    
-    # 5. resolve questionables by adding to questionables_dict
-    
-    # 6. add replacements to the questionables_dict
-    replace_questionables(xml_file_path)
+    for xml_file in xml_files:
+        replace_non_ascii(xml_file)
+        replace_questionables(xml_file)

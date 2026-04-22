@@ -80,6 +80,7 @@ replacement_dict = {
     "¦": "|",
     "¯": "-",
     "¶": "P",
+    "Å": "", # Replication character
 }
 
 questionables_dict = {
